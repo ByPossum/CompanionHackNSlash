@@ -30,12 +30,14 @@ public class GoapController : BaseInput
         gA_possibleActions = _possibleActions;
         gA_lastAction = _possibleActions[0];
         gs_goal = new GoalState(L_goalStates, L_goalPositions.ConvertAll<int>(new System.Converter<EWorldStateBitPositions, int>(GoalState.WorldStateToInt)));
+        as_planner = GetComponent<SingleThreadedAStar>() ?? gameObject.AddComponent<SingleThreadedAStar>();
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (b_planning)
+        if (b_planning && !as_planner.Running)
             Plan();
         else
         {
@@ -45,23 +47,16 @@ public class GoapController : BaseInput
         }
     }
 
-    private void Plan()
+    private async void Plan()
     {
-        as_planner = GetComponent<SingleThreadedAStar>() ?? gameObject.AddComponent<SingleThreadedAStar>();
-        if (!as_planner.Running)
+        Conditions targetConditions = new Conditions(gs_goal.GetState());
+        GoapNode targetNode = new GoapNode(0, 0, 0, targetConditions, null, null);
+        as_planner.Init(gA_possibleActions, targetNode, gA_lastAction);
+        await as_planner.Search(gA_lastAction);
+        if (as_planner.GetPath() != null)
         {
-            Conditions targetConditions = new Conditions(gs_goal.GetState(), null);
-            GoapNode targetNode = new GoapNode(0, 0, 0, targetConditions, null, null);
-            as_planner.Init(gA_possibleActions, targetNode, gA_lastAction);
-        }
-        else
-        {
-            if (as_planner.GetPath() != null)
-            {
-                gA_currentActions = as_planner.GetPath().ToArray();
-                b_planning = false;
-            }
-            Debug.Log("Still planning");
+            gA_currentActions = as_planner.GetPath().ToArray();
+            b_planning = false;
         }
     }
 

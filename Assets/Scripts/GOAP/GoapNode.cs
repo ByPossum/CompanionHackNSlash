@@ -8,10 +8,12 @@ namespace LudoGoap
     public class GoapNode : Node
     {
         protected int i_actionCost;
+        protected string s_nodeName;
         protected Conditions preConditions;
         protected Conditions postConditions;
         protected GoapAction ga_action;
         protected GoapNode[] gn_connection;
+        public string NodeName { get { return s_nodeName; } }
         public Conditions PreConditions { get { return preConditions; } }
         public Conditions PostConditions { get { return postConditions; } }
         public GoapNode[] Neighbours { get { return gn_connection; } }
@@ -26,6 +28,11 @@ namespace LudoGoap
         public void InitConnections(GoapNode[] _connections)
         {
             gn_connection = _connections;
+        }
+
+        public void SetName(string _name)
+        {
+            s_nodeName = _name;
         }
 
         public GoapAction PerformAction()

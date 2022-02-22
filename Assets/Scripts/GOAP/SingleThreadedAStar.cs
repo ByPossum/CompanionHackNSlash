@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using LudoGoap;
 
@@ -22,12 +23,12 @@ public class SingleThreadedAStar : MonoBehaviour
         Search(_lastAction);
     }
 
-    private void Search(GoapNode _lastAction)
+    public async Task Search(GoapNode _lastAction)
     {
         if (!b_searchRunning)
         {
             b_searchRunning = true;
-            StartCoroutine(RunSearch(_lastAction));
+            await RunSearch(_lastAction);
         }
     }
 
@@ -57,12 +58,14 @@ public class SingleThreadedAStar : MonoBehaviour
         yield return new WaitForEndOfFrame();
     }
 
-    private IEnumerator RunSearch(GoapNode _startNode)
+    private async Task RunSearch(GoapNode _startNode)
     {
         // The "Start" node doens't really exist, so the last action taken is used instead
         gnA_openSet.Add(_startNode);
+        Debug.Log("Search Started");
         while(gnA_openSet.Count > 0)
         {
+            Debug.Log("Search Running");
             // Getting the lowest cost node
             GoapNode currentNode = gnA_openSet[0];
             for (int i = 1; i < gnA_openSet.Count; i++)
@@ -97,8 +100,18 @@ public class SingleThreadedAStar : MonoBehaviour
                     neighbour.ChangeParent(currentNode);
                 }
             }
-            yield return new WaitForEndOfFrame();
+            await Task.Yield();
         }
+        DebugOpenSet();
         b_searchRunning = false;
+    }
+
+    private void DebugOpenSet()
+    {
+        Debug.Log("======NODES======");
+        foreach(GoapNode node in gnA_closedSet)
+        {
+            Debug.Log(node.NodeName);
+        }
     }
 }

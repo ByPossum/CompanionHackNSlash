@@ -40,6 +40,7 @@ namespace LudoGoap
                 new List<int>() { (int)EWorldStateBitPositions.PathToKey, (int)EWorldStateBitPositions.ThroughDoor, (int)EWorldStateBitPositions.PlayerRequest }),
                 new Conditions(new bool?[2] { false, true },
                 new List<int>() { (int)EWorldStateBitPositions.PathToKey, (int)EWorldStateBitPositions.KeyObtained }), moveTo);
+            actions[0].SetName("MoveTo");
             // Player help request
             GoapAction playerHelp = (GameObject) => gcA_agents[ind].Jump(pc_player.gameObject);
             actions[1] = new GoapNode(0, 0, 1,
@@ -47,6 +48,7 @@ namespace LudoGoap
                 new List<int>() {(int)EWorldStateBitPositions.PlayerRequest}),
                 new Conditions(new bool?[2] { true, false },
                 new List<int>() { (int)EWorldStateBitPositions.PathToKey, (int)EWorldStateBitPositions.KeyObtained }), playerHelp);
+            actions[1].SetName("PlayerHelp");
             return actions;
         }
 

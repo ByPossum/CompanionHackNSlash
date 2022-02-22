@@ -13,8 +13,18 @@ namespace LudoGoap
         public List<int> ConditionIndicies;
         public Conditions(bool?[] _newConditions, List<int> _newIndicies)
         {
-            bA_conditions = _newConditions;
+            int iter = 0;
+            bA_conditions = new bool?[GoapBlackboard.STATELENGTH];
             iL_conditionIndicies = _newIndicies;
+            foreach (int ind in iL_conditionIndicies)
+            {
+                bA_conditions[ind] = _newConditions[iter];
+                iter++;
+            }
+        }
+        public Conditions(bool?[] _newConditions)
+        {
+            bA_conditions = _newConditions;
         }
 
         public static int operator -(Conditions a, Conditions b)
