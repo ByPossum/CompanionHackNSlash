@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,7 +10,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody rb;
     private Animator anim;
     private float f_inputTime = 0;
-
+    private PlayerState ps_currentState;
 
     [Header("Movement Modifiers")]
     [SerializeField, Tooltip("The base walking speed")]
@@ -35,13 +36,26 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(ci_input.Direction != Vector2.zero)
+        CheckButtonAction();
+        Action act = ps_currentState switch
+        {
+            PlayerState.none => () => Move(),
+            PlayerState.jump => () => Jump(),
+            PlayerState.attack => () => Attack(),
+            _ => () => { return; }
+        };
+        act();
+    }
+
+    private void Move()
+    {
+        if (ci_input.Direction != Vector2.zero)
         {
             f_inputTime += Time.deltaTime;
             float x = ci_input.Direction.x * ac_walkCurve.Evaluate(f_inputTime);
             float y = ci_input.Direction.y * ac_walkCurve.Evaluate(f_inputTime);
             rb.velocity = new Vector3(x, rb.velocity.y, y).normalized * f_walkSpeed;
-            anim.SetFloat("Walkspeed", 1f);
+            anim.SetFloat("Walkspeed", y);
         }
         else
         {
@@ -54,4 +68,31 @@ public class PlayerController : MonoBehaviour
             //rb.velocity = new Vector3(x, rb.velocity.y, y);
         }
     }
+
+    private void Jump()
+    {
+        anim.SetTrigger("Jump");
+    }
+
+    private void Attack()
+    {
+
+    }
+
+    private void CheckButtonAction()
+    {
+        ps_currentState = ci_input.CurrentAction switch
+        {
+            PlayerAction.jump => PlayerState.jump,
+            PlayerAction.attack => PlayerState.attack,
+            _ => ps_currentState
+        };
+    }
+}
+
+public enum PlayerState
+{
+    none,
+    jump,
+    attack,
 }

@@ -14,9 +14,13 @@ namespace LudoJobs
 
         public virtual void Start()
         {
-            T_thread = new Thread(Run);
-            T_thread.Name = "LudoJob";
-            T_thread.Start();
+            if(T_thread == null)
+            {
+                T_thread = new Thread(Run);
+                T_thread.Name = "LudoJob";
+                T_thread.Start();
+
+            }
         }
 
         public virtual void SetAffinity()
@@ -31,7 +35,7 @@ namespace LudoJobs
         }
 
         protected virtual void ThreadJob() { }
-        protected virtual void OnFinished() { Abort(); }
+        protected virtual void OnFinished() {  }
         public virtual bool Update()
         {
             if (b_isDone)

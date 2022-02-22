@@ -1,70 +1,43 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using LudoJobs;
+using LudoGoap;
 
-public class ThreadConductor : MonoBehaviour
+namespace LudoJobs
 {
-    WorldStates ws_currentWorldState;
-    [SerializeField] private ThreadedJob[] tsA_jobs;
-    private Queue<Object> oQ_threadObservers = new Queue<Object>();
-    private bool b_runThreads = true;
-    // Start is called before the first frame update
-    void Start()
+    public class ThreadConductor : MonoBehaviour
     {
-        tsA_jobs = new ThreadedJob[1];
-        StartCoroutine(UpdateWorldState());
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (tsA_jobs[(int)EThreadNames.worldSensor].IsDone)
+        private ThreadedJob[] tsA_jobs;
+        private Queue<MonoBehaviour> oQ_threadObservers = new Queue<MonoBehaviour>();
+        private bool b_runThreads = true;
+        // Start is called before the first frame update
+        public void Init<T>() where T : ThreadedJob
         {
-            PushWorldStates();
+            tsA_jobs = new T[5];
         }
-    }
 
-    private void OnApplicationQuit()
-    {
-        b_runThreads = false;
-    }
-
-    public void GetWorldState(Object o_threadChecker)
-    {
-        if (tsA_jobs[(int)EThreadNames.worldSensor].IsDone)
+        // Update is called once per frame
+        void Update()
         {
-            //If thread is done immediately update o_threadChecker
-        }
-        else
-        {
-            oQ_threadObservers.Enqueue(o_threadChecker);
-        }
-    }
-
-    private void PushWorldStates()
-    {
-        if (oQ_threadObservers.Count > 0)
-        {
-            foreach (Object threadChecker in oQ_threadObservers)
+            if (b_runThreads)
             {
-                //threadChecker.
+                foreach(ThreadedJob job in tsA_jobs)
+                {
+                    if (job.IsDone)
+                        job.Abort();
+                }
             }
-            oQ_threadObservers.Clear();
+        }
+
+        private void OnApplicationQuit()
+        {
+            b_runThreads = false;
         }
     }
 
-    private IEnumerator UpdateWorldState()
+    public enum EThreadNames
     {
-        ThreadedWorldState tws_sensor = new ThreadedWorldState();
-        tsA_jobs[(int)EThreadNames.worldSensor] = tws_sensor;
-        tws_sensor.Start();
-        yield return StartCoroutine(tws_sensor.WaitFor());
-        ws_currentWorldState = tws_sensor.SensorStates;
+        AStar,
     }
-}
 
-public enum EThreadNames
-{
-    worldSensor,
 }

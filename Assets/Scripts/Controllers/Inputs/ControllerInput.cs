@@ -23,7 +23,10 @@ public class ControllerInput : BaseInput
     {
         v_direction = context.action.ReadValue<Vector2>();
     }
-
+    public void Jump()
+    {
+        pa_currentAction = PlayerAction.jump;
+    }
     private bool MoveTransition(PlayerAction _target)
     {
         switch (pa_currentAction)
