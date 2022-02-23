@@ -6,7 +6,7 @@ namespace LudoGoap
 {
     public class WorldStates : BaseStates
     {
-
+        // For a multiagent approach, each agent would update its own version of "WorldState" before planning
         private GoapController gc_agent;
         private PlayerController pc_player;
         private ShinyKey sk_key;
@@ -22,7 +22,7 @@ namespace LudoGoap
         }
 
         /// <summary>
-        /// Discritizing the "world state" is rough
+        /// Discritizing the world state to bools
         /// </summary>
         public void UpdateWorldState()
         {
@@ -37,6 +37,8 @@ namespace LudoGoap
                     (int)EWorldStateBitPositions.KeyObtained => CheckKeyObtained(),
                     (int)EWorldStateBitPositions.PathToKey => CheckPathToKey(),
                     (int)EWorldStateBitPositions.ThroughDoor => CheckThroughDoor(),
+                    (int)EWorldStateBitPositions.NearPlayer => CheckNearPlayer(),
+                    (int)EWorldStateBitPositions.PathToPlayer => CheckPathToPlayer(),
                     _ => false
                 };
             }
@@ -64,6 +66,16 @@ namespace LudoGoap
         {
             return gc_agent.CheckPathTo(sk_key.transform);
         }
+        private bool CheckPathToPlayer()
+        {
+            return gc_agent.CheckPathTo(pc_player.transform);
+        }
+
+        private bool CheckNearPlayer()
+        {
+            return Vector3.Distance(gc_agent.transform.position, pc_player.transform.position) < 3;
+        }
+
         // Win
         private bool CheckThroughDoor()
         {
@@ -79,6 +91,8 @@ namespace LudoGoap
         KeyObtained,
         PathToKey,
         ThroughDoor,
+        NearPlayer,
+        PathToPlayer,
     }
 
 }

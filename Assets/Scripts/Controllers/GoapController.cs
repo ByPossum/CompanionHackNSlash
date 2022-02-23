@@ -8,6 +8,7 @@ public class GoapController : BaseInput
 {
     private bool b_planning = true;
     private int i_stateParameter;
+    private Rigidbody rb;
     private IStates Is_worldState;
     private IStates Is_agentState;
     private GoapNode[] gA_possibleActions;
@@ -18,6 +19,7 @@ public class GoapController : BaseInput
     [SerializeField] private GoalState gs_goal;
     [SerializeField] private List<EWorldStateBitPositions> L_goalPositions = new List<EWorldStateBitPositions>();
     [SerializeField] private List<bool> L_goalStates = new List<bool>();
+    [SerializeField] private float f_speed;
 
     private NavMeshPath nmp_checkingPath;
     private NavMeshPath nmp_followingPath;
@@ -29,6 +31,7 @@ public class GoapController : BaseInput
         Is_agentState = _agent;
         gA_possibleActions = _possibleActions;
         gA_lastAction = _possibleActions[0];
+        rb = GetComponent<Rigidbody>() ?? gameObject.AddComponent<Rigidbody>();
         gs_goal = new GoalState(L_goalStates, L_goalPositions.ConvertAll<int>(new System.Converter<EWorldStateBitPositions, int>(GoalState.WorldStateToInt)));
         as_planner = GetComponent<SingleThreadedAStar>() ?? gameObject.AddComponent<SingleThreadedAStar>();
 
@@ -37,13 +40,16 @@ public class GoapController : BaseInput
     // Update is called once per frame
     void Update()
     {
+        // 
         if (b_planning && !as_planner.Running)
+        {
             Plan();
-        else
+        }
+        else if(gA_currentActions.Length > 0)
         {
             gA_lastAction = gA_currentActions[0];
             gA_lastAction.PerformAction();
-            Debug.Log(gA_lastAction.PerformAction());
+            //Debug.Log(gA_lastAction.PerformAction());
         }
     }
 
@@ -56,6 +62,7 @@ public class GoapController : BaseInput
         if (as_planner.GetPath() != null)
         {
             gA_currentActions = as_planner.GetPath().ToArray();
+            Debug.Log("Path Obtained");
             b_planning = false;
         }
     }
@@ -73,10 +80,21 @@ public class GoapController : BaseInput
             nmp_followingPath = new NavMeshPath();
             NavMesh.CalculatePath(transform.position, _target.transform.position, NavMesh.AllAreas, nmp_followingPath);
         }
+        rb.velocity = (transform.position - nmp_followingPath.corners[0]).normalized * f_speed;
     }
 
     public void Jump(GameObject _target)
     {
         transform.position = _target.transform.position;
+    }
+
+    public void MoveToPlayer(GameObject _target)
+    {
+        if(nmp_followingPath == null)
+        {
+            nmp_followingPath = new NavMeshPath();
+            NavMesh.CalculatePath(transform.position, _target.transform.position, NavMesh.AllAreas, nmp_followingPath);
+        }
+        rb.velocity = (transform.position - nmp_followingPath.corners[0]).normalized * f_speed;
     }
 }

@@ -19,6 +19,8 @@ namespace LudoGoap
         public GoapNode[] Neighbours { get { return gn_connection; } }
         public GoapNode(int _gCost, int _hCost, int _actionCost, Conditions _pre, Conditions _post, GoapAction _action) : base(_gCost, _hCost)
         {
+            i_gCost = 1000;
+            i_hCost = 1000;
             i_actionCost = _actionCost;
             preConditions = _pre;
             postConditions = _post;
@@ -46,7 +48,7 @@ namespace LudoGoap
             int similarity = GoapBlackboard.STATELENGTH;
             // Take a reductive approach to evaluate the similarity
             for (int i = 0; i < GoapBlackboard.STATELENGTH-1; i++)
-                if (_indsA[i] != _indsB[i])
+                if (_indsA[i] == _indsB[i])
                     similarity--;
             return similarity;
         }

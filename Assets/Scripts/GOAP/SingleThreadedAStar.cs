@@ -39,6 +39,7 @@ public class SingleThreadedAStar : MonoBehaviour
         if (b_searchDone)
         {
             b_searchDone = b_searchRunning = false;
+            Debug.Log("Path Returned");
             return gnA_path;
         }
         return null;
@@ -62,10 +63,8 @@ public class SingleThreadedAStar : MonoBehaviour
     {
         // The "Start" node doens't really exist, so the last action taken is used instead
         gnA_openSet.Add(_startNode);
-        Debug.Log("Search Started");
         while(gnA_openSet.Count > 0)
         {
-            Debug.Log("Search Running");
             // Getting the lowest cost node
             GoapNode currentNode = gnA_openSet[0];
             for (int i = 1; i < gnA_openSet.Count; i++)
@@ -102,11 +101,11 @@ public class SingleThreadedAStar : MonoBehaviour
             }
             await Task.Yield();
         }
-        DebugOpenSet();
+        DebugActions();
         b_searchRunning = false;
     }
 
-    private void DebugOpenSet()
+    private void DebugActions()
     {
         Debug.Log("======NODES======");
         foreach(GoapNode node in gnA_closedSet)

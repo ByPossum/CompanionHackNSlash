@@ -33,7 +33,7 @@ namespace LudoGoap
         private GoapNode[] BuildActions(int ind)
         {
             // Move to key action
-            GoapNode[] actions = new GoapNode[2];
+            GoapNode[] actions = new GoapNode[3];
             GoapAction moveTo = (GameObject) => gcA_agents[ind].MoveTo(sk_key.gameObject);
             actions[0] = new GoapNode(0, 0, 1,
                 new Conditions(new bool?[3] { true, false, false },
@@ -49,6 +49,13 @@ namespace LudoGoap
                 new Conditions(new bool?[2] { true, false },
                 new List<int>() { (int)EWorldStateBitPositions.PathToKey, (int)EWorldStateBitPositions.KeyObtained }), playerHelp);
             actions[1].SetName("PlayerHelp");
+            GoapAction moveToPlayer = (GameObject) => gcA_agents[ind].MoveTo(pc_player.gameObject);
+            actions[2] = new GoapNode(0, 0, 0,
+                new Conditions(new bool?[2] { false, true },
+                new List<int>() { (int)EWorldStateBitPositions.NearPlayer, (int)EWorldStateBitPositions.PathToPlayer}),
+                new Conditions(new bool?[1] { true },
+                new List<int>() { (int)EWorldStateBitPositions.NearPlayer }), moveToPlayer);
+            actions[2].SetName("MoveToPlayer");
             return actions;
         }
 
