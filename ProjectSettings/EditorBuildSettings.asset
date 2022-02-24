@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/GoapScene.unity
+    guid: ee7ab09014b440d46a7de5f1fe068a9c
   m_configObjects: {}

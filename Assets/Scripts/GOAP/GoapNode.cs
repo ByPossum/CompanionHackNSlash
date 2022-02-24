@@ -40,8 +40,17 @@ namespace LudoGoap
         public GoapAction PerformAction()
         {
             return ga_action;
-        } 
+        }
 
+        #region Distance Functions
+        // NB I've opted for explicit functions such as GetDistanceFromPreToPost, which all refer to GetDistanceFromNodes, for clarity when referenced elsewhere
+
+        /// <summary>
+        /// Used to calculate the distance between node using the difference in bits
+        /// </summary>
+        /// <param name="_nodeA">Current node</param>
+        /// <param name="_nodeB">Target node</param>
+        /// <returns>Distance</returns>
         private static int GetDistanceFromNodes(bool?[] _indsA, bool?[] _indsB)
         {
             // Similarity starts at maximum
@@ -63,12 +72,7 @@ namespace LudoGoap
             return GetDistanceFromNodes(_currentNode.preConditions.BitConditions, _targetNode.preConditions.BitConditions);
         }
 
-        /// <summary>
-        /// Used to calculate the distance between node using the difference in bits
-        /// </summary>
-        /// <param name="_nodeA">Current node</param>
-        /// <param name="_nodeB">Target node</param>
-        /// <returns>Distance</returns>
+
         public static int GetDistanceFromPostConditions(GoapNode _currentNode, GoapNode _targetNode)
         {
             return GetDistanceFromNodes(_currentNode.postConditions.BitConditions, _targetNode.postConditions.BitConditions);
@@ -78,6 +82,7 @@ namespace LudoGoap
         {
             return GetDistanceFromNodes(_currentNode.postConditions.BitConditions, _targetNode.preConditions.BitConditions);
         }
+        #endregion
     }
 
     public delegate void GoapAction(GameObject _target);

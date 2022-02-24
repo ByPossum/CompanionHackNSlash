@@ -12,6 +12,13 @@ namespace LudoGoap
         private ShinyKey sk_key;
         private Transform t_goalPos;
 
+        /// <summary>
+        /// Initialize the worldstate
+        /// </summary>
+        /// <param name="_agent">Agents perspective for worldstate</param>
+        /// <param name="_player">Player to check distance and position from</param>
+        /// <param name="_key">Key is an object in the world</param>
+        /// <param name="_goal">Goal is a position we're tryng to get to</param>
         public WorldStates(GoapController _agent, PlayerController _player, ShinyKey _key, Transform _goal)
         {
             bA_state = new bool?[GoapBlackboard.STATELENGTH];
@@ -84,6 +91,9 @@ namespace LudoGoap
         #endregion
     }
 
+    /// <summary>
+    /// Positions of the bits in the worldstate
+    /// </summary>
     public enum EWorldStateBitPositions
     {
         PathToExit,

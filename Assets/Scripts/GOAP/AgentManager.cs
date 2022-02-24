@@ -17,7 +17,9 @@ namespace LudoGoap
         // Start is called before the first frame update
         void Start()
         {
+            // Create the worldstates to manage
             ws_world = new WorldStates(gcA_agents[(int)AgentType.companion], pc_player, sk_key, t_goalPos);
+            // Initialize all agents
             for (int i = 0; i < gcA_agents.Length; i++)
             {
                 switch (gcA_agents[i].TypeOfAgent)
@@ -29,7 +31,11 @@ namespace LudoGoap
             }
         }
 
-        // With more time I'd manage this via XML or something similar
+        /// <summary>
+        /// Builds the GoapNodes which contain actions. NB With more time I'd manage this via XML or something similar
+        /// </summary>
+        /// <param name="ind">Which agent to assign actions from</param>
+        /// <returns>All of the agents actions</returns>
         private GoapNode[] BuildActions(int ind)
         {
             // Move to key action
@@ -41,7 +47,7 @@ namespace LudoGoap
                 new Conditions(new bool?[2] { false, true },
                 new List<int>() { (int)EWorldStateBitPositions.PathToKey, (int)EWorldStateBitPositions.KeyObtained }), moveTo);
             actions[0].SetName("MoveTo");
-            // Player help request
+            // Player help request action
             GoapAction playerHelp = (GameObject) => gcA_agents[ind].Jump(pc_player.gameObject);
             actions[1] = new GoapNode(0, 0, 1,
                 new Conditions(new bool?[1] { true },
@@ -49,6 +55,7 @@ namespace LudoGoap
                 new Conditions(new bool?[2] { true, false },
                 new List<int>() { (int)EWorldStateBitPositions.PathToKey, (int)EWorldStateBitPositions.KeyObtained }), playerHelp);
             actions[1].SetName("PlayerHelp");
+            // Move to player action
             GoapAction moveToPlayer = (GameObject) => gcA_agents[ind].MoveTo(pc_player.gameObject);
             actions[2] = new GoapNode(0, 0, 0,
                 new Conditions(new bool?[2] { false, true },
